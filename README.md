@@ -1,59 +1,200 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# URL Shortener
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A multi-company URL shortening application built with Laravel 12, PHP, and MySQL.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Role-based access control with three roles: `superadmin`, `admin`, and `member`.
+- SuperAdmin can manage companies and invite Admin users.
+- Admin can invite Admins and Members within their own company.
+- Invitation links expire after 7 days and can only be accepted once.
+- SuperAdmin and Members can create short URLs.
+- Admins can view all short URLs created within their company.
+- Members can view only the short URLs they created.
+- Public short links redirect visitors to the original URL without requiring login.
+- Click counts are tracked for short URLs.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2 or later, subject to the requirements of the installed Laravel version
+- Laravel 12
+- MySQL
+- Laravel Breeze (Blade authentication)
+- Node.js and npm
 
-## Learning Laravel
+## Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Install PHP with the Laravel-required extensions, Composer, MySQL, Node.js, npm, and Git.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+For Windows/XAMPP, ensure the PHP used by your terminal is the intended XAMPP PHP version:
 
-## Laravel Sponsors
+```bash
+php -v
+composer --version
+node -v
+npm -v
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Local installation
 
-### Premium Partners
+### 1. Get the source code
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Clone the repository and enter the project directory:
 
-## Contributing
+```bash
+git clone https://github.com/YOUR_GITHUB_USERNAME/url-shortener.git
+cd url-shortener
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Replace `YOUR_GITHUB_USERNAME` with the GitHub account or organization that owns the repository. Alternatively, download and extract the repository ZIP.
 
-## Code of Conduct
+### 2. Install PHP dependencies
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer install
+```
 
-## Security Vulnerabilities
+### 3. Create your local environment file
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Windows Command Prompt:
+
+```cmd
+copy .env.example .env
+```
+
+Git Bash:
+
+```bash
+cp .env.example .env
+```
+
+### 4. Create and configure the database
+
+Create a MySQL database:
+
+```sql
+CREATE DATABASE url_shortener;
+```
+
+Update these values in `.env` to match your local MySQL configuration:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=url_shortener
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+If your MySQL root account has a password, enter it as `DB_PASSWORD`.
+
+### 5. Generate the Laravel application key
+
+```bash
+php artisan key:generate
+```
+
+### 6. Run database migrations
+
+```bash
+php artisan migrate
+```
+
+If the project provides a SuperAdmin seeder, run it using the actual class name found under `database/seeders`. For example:
+
+```bash
+php artisan db:seed --class=SuperAdminSeeder
+```
+
+Do not run `php artisan migrate:fresh` on a database containing data you want to keep; it drops existing tables.
+
+### 7. Install and build frontend assets
+
+```bash
+npm install
+npm run build
+```
+
+For frontend development with Vite, run `npm run dev` in a separate terminal instead of relying only on the production build.
+
+### 8. Start the local server
+
+```bash
+php artisan serve
+```
+
+Open the URL printed by Artisan, usually:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Roles and permissions
+
+| Capability | SuperAdmin | Admin | Member |
+|---|---|---|---|
+| Create, edit, and delete companies | Yes | No | No |
+| Invite an Admin | Yes, choosing a company | Yes, own company only | No |
+| Invite a Member | No | Yes, own company only | No |
+| Create short URLs | Yes, choosing a company | No | Yes, own company |
+| View short URLs | No global URL listing | All URLs in own company | Own URLs only |
+| Open public short URLs | Yes | Yes | Yes |
+
+An invited user receives their role and company assignment from the invitation. These values should not be supplied by the registration form. In the current development workflow, the invitation URL may be displayed for manual sharing if email delivery has not been configured.
+
+## Testing the application
+
+After installation, test the following:
+
+- [ ] Log in with the seeded SuperAdmin account.
+- [ ] Create a company as SuperAdmin.
+- [ ] Invite an Admin to a company and accept the invitation.
+- [ ] Log in as Admin and invite an Admin or Member in the same company.
+- [ ] Confirm a Member cannot access company management or invitation pages.
+- [ ] Create a short URL as SuperAdmin for a selected company.
+- [ ] Create a short URL as Member and confirm the member's company is assigned automatically.
+- [ ] Confirm Admin cannot create short URLs.
+- [ ] Confirm Admin sees only URLs belonging to their company.
+- [ ] Confirm Member sees only URLs they created.
+- [ ] Open a generated public short URL and confirm it redirects to the original URL.
+- [ ] Confirm the click count increases after redirection.
+- [ ] Confirm expired and already accepted invitations cannot be reused.
+
+## Useful commands
+
+Clear Laravel's cached configuration, routes, and views:
+
+```bash
+php artisan optimize:clear
+```
+
+List application routes:
+
+```bash
+php artisan route:list
+```
+
+Check migration status:
+
+```bash
+php artisan migrate:status
+```
+
+Run automated tests:
+
+```bash
+php artisan test
+```
+
+## Security and repository notes
+
+- Never commit `.env`, credentials, API keys, or production secrets.
+- Keep `vendor/` and `node_modules/` out of Git; install them locally with Composer and npm.
+- Check that `.env` is ignored by `.gitignore` before committing.
+- Enforce authorization in routes and controllers. Hiding navigation links alone does not secure a feature.
+- Use HTTPS and production-safe environment settings when deploying.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Add the applicable license information here if you plan to distribute this project.
